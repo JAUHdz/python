@@ -1,0 +1,44 @@
+###
+POST http://127.0.0.1:8000/profesiones
+Content-Type: application/json
+
+{
+  "nombre": "Ingeniero",
+  "descripcion": "Encargado de procesos técnicos",
+  "estado_id": 1
+}
+
+###
+PUT http://127.0.0.1:8000/profesiones/nombre/Ingeniero
+Content-Type: application/json
+
+{
+  "nombre": "Ingeniero",
+  "descripcion": "Encargado de obras civiles",
+  "estado_id": 1
+}
+
+
+###
+GET http://127.0.0.1:8000/profesiones
+
+###
+GET http://127.0.0.1:8000/profesiones/nombre/Ingeniero
+
+###
+POST http://127.0.0.1:8000/profesionesusuario
+Content-Type: application/json
+
+{
+  "persona_id": 1,
+  "profesion_id": 1
+}
+
+###
+GET http://127.0.0.1:8000/profesionesusuario
+
+###
+GET http://127.0.0.1:8000/profesionesusuario/profesion/1
+
+###
+GET http://127.0.0.1:8000/profesionesusuario/detalle
