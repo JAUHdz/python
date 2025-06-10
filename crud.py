@@ -78,6 +78,30 @@ def obtener_profesiones_con_estado(db: Session):
         })
     return resultado
 
+def obtener_profesion_por_nombre_con_estado(db: Session, nombre: str):
+    profesiones = db.query(models.Profesion).filter(models.Profesion.nombre == nombre).all()
+
+    try:
+        response = requests.get("https://status-spring-app.onrender.com/status")
+        estados = response.json() if response.status_code == 200 else []
+        estados_dict = {estado['id']: estado['nombre'] for estado in estados}
+    except:
+        estados_dict = {}
+
+    resultado = []
+    for p in profesiones:
+        resultado.append({
+            "id": p.id,
+            "nombre": p.nombre,
+            "descripcion": p.descripcion,
+            "fecha": p.fecha,
+            "estado_id": p.estado_id,
+            "nombre_estado": estados_dict.get(p.estado_id, "Desconocido"),
+            # puedes agregar más campos aquí si tu modelo los tiene
+        })
+    return resultado
+
+
 
 # ProfesionesUsuario
 def persona_existe(persona_id: int) -> bool:
