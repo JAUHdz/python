@@ -23,12 +23,10 @@ def obtener_estados_validos():
 
 def crear_profesion(db: Session, profesion: schemas.ProfesionCreate):
     estados_validos = obtener_estados_validos()
-    if profesion.estado_id not in estados_validos:
+    if str(profesion.estado_id) not in estados_validos:
         raise HTTPException(status_code=400, detail="estado_id inválido, no existe en la API de estados")
 
-    nuevo_id = generar_siguiente_id(db)
     db_prof = models.Profesion(
-        id=nuevo_id,
         fecha=date.today(),
         **profesion.dict()
     )

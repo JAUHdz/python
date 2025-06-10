@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date
+from uuid import UUID
 
 # ----------------
 # Profesiones
@@ -8,13 +9,13 @@ from datetime import date
 class ProfesionBase(BaseModel):
     nombre: str
     descripcion: Optional[str] = None
-    estado_id: int
+    estado_id: UUID  # ahora UUID
 
 class ProfesionCreate(ProfesionBase):
     pass
 
 class Profesion(ProfesionBase):
-    id: int
+    id: UUID
     fecha: date
 
     class Config:
