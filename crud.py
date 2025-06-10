@@ -9,11 +9,27 @@ def generar_siguiente_id(db: Session):
     ultimo = db.query(models.Profesion).order_by(models.Profesion.id.desc()).first()
     return 1 if ultimo is None else ultimo.id + 1
 
+def obtener_estados_validos():
+    try:
+        response = requests.get("https://status-spring-app.onrender.com/status")
+        if response.status_code == 200:
+            estados = response.json()
+            # Retornamos una lista con los ids válidos
+            return [estado['id'] for estado in estados]
+    except Exception:
+        pass
+    return []
+
+
 def crear_profesion(db: Session, profesion: schemas.ProfesionCreate):
+    estados_validos = obtener_estados_validos()
+    if profesion.estado_id not in estados_validos:
+        raise HTTPException(status_code=400, detail="estado_id inválido, no existe en la API de estados")
+
     nuevo_id = generar_siguiente_id(db)
     db_prof = models.Profesion(
         id=nuevo_id,
-        fecha=date.today(), 
+        fecha=date.today(),
         **profesion.dict()
     )
     db.add(db_prof)
@@ -39,6 +55,29 @@ def actualizar_profesion_por_nombre(db: Session, nombre: str, profesion: schemas
     db.commit()
     db.refresh(db_prof)
     return db_prof
+
+def obtener_profesiones_con_estado(db: Session):
+    profesiones = db.query(models.Profesion).all()
+    
+    try:
+        response = requests.get("https://status-spring-app.onrender.com/status")
+        estados = response.json() if response.status_code == 200 else []
+        estados_dict = {estado['id']: estado['nombre'] for estado in estados}
+    except:
+        estados_dict = {}
+
+    resultado = []
+    for p in profesiones:
+        resultado.append({
+            "id": p.id,
+            "nombre": p.nombre,
+            "fecha": p.fecha,
+            "estado_id": p.estado_id,
+            "nombre_estado": estados_dict.get(p.estado_id, "Desconocido"),
+            # otros campos que tengas en profesion
+        })
+    return resultado
+
 
 # ProfesionesUsuario
 def persona_existe(persona_id: int) -> bool:

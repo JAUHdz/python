@@ -32,6 +32,11 @@ def obtener_profesion_por_nombre(nombre: str, db: Session = Depends(get_db)):
 def actualizar_profesion(nombre: str, profesion: schemas.ProfesionCreate, db: Session = Depends(get_db)):
     return crud.actualizar_profesion_por_nombre(db, nombre, profesion)
 
+@app.get("/profesiones_con_estado")
+def leer_profesiones_con_estado(db: Session = Depends(get_db)):
+    profesiones = crud.obtener_profesiones_con_estado(db)
+    return profesiones
+
 # RUTAS PROFESIONES-USUARIO
 @app.post("/profesionesusuario/", response_model=schemas.ProfesionUsuario)
 def crear_profesion_usuario(data: schemas.ProfesionUsuarioCreate, db: Session = Depends(get_db)):
